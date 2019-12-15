@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Helen Piedra" />
+    <meta name="description" content="Hi">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+    <title>Project One</title>
+    <meta name="generator" content="Hugo 0.61.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="/blog/">BLOG</a></li>
+        
+        <li><a href="/projects/">PROJECTS</a></li>
+        
+        <li><a href="/resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="/project1/">Project One</a></strong>
+          </h3>
+        </div>
+        <div class="blog-title">
+          <h4>
+          January 1, 0001
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<div id="r-markdown" class="section level2">
+<h2>R Markdown</h2>
+<p>This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <a href="http://rmarkdown.rstudio.com" class="uri">http://rmarkdown.rstudio.com</a>.</p>
+<p>When you click the <strong>Knit</strong> button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:</p>
+</div>
+<div id="helen-piedra-hp7642" class="section level2">
+<h2>Helen Piedra (Hp7642)</h2>
+</div>
+<div id="introduction" class="section level2">
+<h2>Introduction:</h2>
+<p><em>I chose the datasets: Backpack and Political. Backpack contains the weights of a sample of college students. There are 100 observations and 9 variables including: BackpackWeight, BodyWeight, Ratio, BackProblems, Major, Year, Sex, Status, and Units. The Political data set contains political activity of 59 college students. There are 59 observations and 9 variables including: Year, Sex, Vote, Paper, Edit, TV, Ethics, Inform, and Participate. These datasets were interesting to me because I am a college student myself and it would be interesting to find any correlations between a few random variables. I expect to find at least one correlation when comparing the variables. One potential association I expect to see if that students with heavier backpacks may have increased voter participation due to a potential increased interest in education.</em></p>
+<pre class="r"><code>Political &lt;- read.csv(&quot;https://vincentarelbundock.github.io/Rdatasets/csv/Stat2Data/Political.csv&quot;)
+Backpack &lt;- read.csv(&quot;https://vincentarelbundock.github.io/Rdatasets/csv/Stat2Data/Backpack.csv&quot;)</code></pre>
+</div>
+<div id="tidying-rearranging-widelong" class="section level2">
+<h2>1. Tidying: Rearranging Wide/Long</h2>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(tidyr)</code></pre>
+</div>
+<div id="joiningmerging" class="section level2">
+<h2>2. Joining/Merging</h2>
+<pre class="r"><code>Political2&lt;-Political%&gt;% mutate(Sex= case_when(Sex == 0 ~ &quot;Male&quot;, Sex == 1 ~ &quot;Female&quot;))
+Joinedset&lt;-full_join(Political2,Backpack,by=&quot;Sex&quot;)</code></pre>
+<pre><code>## Warning: Column `Sex` joining character vector and factor, coercing into
+## character vector</code></pre>
+<p><em>I chose to do a full merge of the two datasets using the ‘full_join’ function because this allowed me to combine all variables including the common variable “Sex”. No variables were dropped when performing the full joining of the two datasets.</em></p>
+</div>
+<div id="wrangling" class="section level2">
+<h2>3. Wrangling</h2>
+<pre class="r"><code>glimpse(Joinedset%&gt;% filter(Major == &quot;Bio&quot;))</code></pre>
+<pre><code>## Observations: 258
+## Variables: 19
+## $ X.x            &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 3, 3, 4, 4, …
+## $ Year.x         &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 4, 4, 4, 4, 4, 4, 4, 2, 2, 3, 3, …
+## $ Sex            &lt;chr&gt; &quot;Female&quot;, &quot;Female&quot;, &quot;Female&quot;, &quot;Female&quot;, &quot;Female&quot;, &quot;Fem…
+## $ Vote           &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, …
+## $ Paper          &lt;int&gt; 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 4, 4, 3, 3, …
+## $ Edit           &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
+## $ TV             &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, …
+## $ Ethics         &lt;int&gt; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, …
+## $ Inform         &lt;int&gt; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 2, 2, …
+## $ Participate    &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
+## $ X.y            &lt;int&gt; 1, 9, 10, 17, 24, 55, 56, 1, 9, 10, 17, 24, 55, 56, 20…
+## $ BackpackWeight &lt;int&gt; 9, 5, 2, 13, 15, 13, 17, 9, 5, 2, 13, 15, 13, 17, 5, 1…
+## $ BodyWeight     &lt;int&gt; 125, 130, 120, 145, 205, 145, 144, 125, 130, 120, 145,…
+## $ Ratio          &lt;dbl&gt; 0.0720000, 0.0384615, 0.0166667, 0.0896552, 0.0731707,…
+## $ BackProblems   &lt;int&gt; 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, …
+## $ Major          &lt;fct&gt; Bio, Bio, Bio, Bio, Bio, Bio, Bio, Bio, Bio, Bio, Bio,…
+## $ Year.y         &lt;int&gt; 3, 4, 5, 4, 5, 4, 2, 3, 4, 5, 4, 5, 4, 2, 3, 3, 3, 4, …
+## $ Status         &lt;fct&gt; U, U, U, U, U, U, U, U, U, U, U, U, U, U, U, U, U, U, …
+## $ Units          &lt;int&gt; 13, 14, 8, 16, 12, 16, 13, 13, 14, 8, 16, 12, 16, 13, …</code></pre>
+<p><em>I used the ‘filter’ function to filter out all the college students in the data set who are biology majors.</em></p>
+<pre class="r"><code>glimpse(Joinedset %&gt;% arrange(Ratio))</code></pre>
+<pre><code>## Observations: 2,935
+## Variables: 19
+## $ X.x            &lt;int&gt; 3, 7, 9, 11, 14, 19, 23, 26, 28, 30, 31, 32, 33, 34, 3…
+## $ Year.x         &lt;int&gt; 2, 1, 4, 3, 1, 2, 1, 2, 4, 2, 3, 3, 3, 4, 2, 2, 2, 2, …
+## $ Sex            &lt;chr&gt; &quot;Male&quot;, &quot;Male&quot;, &quot;Male&quot;, &quot;Male&quot;, &quot;Male&quot;, &quot;Male&quot;, &quot;Male&quot;…
+## $ Vote           &lt;int&gt; 3, 2, 3, 3, 3, 1, 3, 3, 1, 1, 1, 2, 1, 3, 3, 1, 3, 3, …
+## $ Paper          &lt;int&gt; 4, 4, 3, 4, 3, 3, 2, 4, 0, 4, 0, 4, 3, 3, 3, 3, 4, 3, …
+## $ Edit           &lt;int&gt; 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, …
+## $ TV             &lt;int&gt; 3, 0, 0, 0, 4, 4, 0, 3, 4, 3, 2, 4, 0, 2, 3, 0, 3, 3, …
+## $ Ethics         &lt;int&gt; 2, 4, 4, 4, 3, 3, 3, 3, 2, 4, 5, 2, 2, 4, 5, 2, 3, 3, …
+## $ Inform         &lt;int&gt; 3, 4, 3, 3, 3, 5, 4, 5, 1, 4, 3, 4, 3, 4, 3, 2, 5, 3, …
+## $ Participate    &lt;int&gt; 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, …
+## $ X.y            &lt;int&gt; 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69…
+## $ BackpackWeight &lt;int&gt; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, …
+## $ BodyWeight     &lt;int&gt; 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125,…
+## $ Ratio          &lt;dbl&gt; 0.016, 0.016, 0.016, 0.016, 0.016, 0.016, 0.016, 0.016…
+## $ BackProblems   &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+## $ Major          &lt;fct&gt; IT, IT, IT, IT, IT, IT, IT, IT, IT, IT, IT, IT, IT, IT…
+## $ Year.y         &lt;int&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, …
+## $ Status         &lt;fct&gt; U, U, U, U, U, U, U, U, U, U, U, U, U, U, U, U, U, U, …
+## $ Units          &lt;int&gt; 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15…</code></pre>
+<p><em>I used the ‘arrange’ function to arrange the dataset by increasing ratios of Backpack to BodyWeight. Using this function we are able to see that the minimum body weight is 125lbs and the maximum body weight is 220lbs. </em></p>
+<pre class="r"><code>glimpse(Joinedset%&gt;% select(starts_with(&quot;s&quot;)))</code></pre>
+<pre><code>## Observations: 2,935
+## Variables: 2
+## $ Sex    &lt;chr&gt; &quot;Female&quot;, &quot;Female&quot;, &quot;Female&quot;, &quot;Female&quot;, &quot;Female&quot;, &quot;Female&quot;, &quot;F…
+## $ Status &lt;fct&gt; U, U, U, U, U, U, U, U, U, U, U, U, U, U, U, U, U, G, U, U, U,…</code></pre>
+<p><em>I used the ‘select’ function to pull out the variables Sex and Status. Within the select function I was able to pull out both variables using ‘starts_with’ to select for the variables starting with the letter “s”. </em></p>
+<pre class="r"><code> Joinedset%&gt;% summarize(mean(BodyWeight, na.rm=T))</code></pre>
+<pre><code>##   mean(BodyWeight, na.rm = T)
+## 1                    153.9349</code></pre>
+<p><em>I used to summarize function to find the mean body weight of all the college students in the dataset. The mean body weight of all college students in the joined dataset is 153.93 lbs</em></p>
+<pre class="r"><code>Political2&lt;-Political %&gt;% mutate(Sex= case_when(Sex == 0 ~ &quot;Male&quot;, Sex == 1 ~ &quot;Female&quot;))</code></pre>
+<p><em>I used the mutate function in order to change the numeric values for sex of one dataset into categorical values so values would match up for the ‘Sex’ varibles in both datasets Backpack and Political.</em></p>
+<pre class="r"><code>Joinedset %&gt;%
+  group_by(Major) %&gt;%
+  summarize(mean_BodyWeight=mean(BodyWeight,na.rm=T))</code></pre>
+<pre><code>## # A tibble: 41 x 2
+##    Major     mean_BodyWeight
+##    &lt;fct&gt;               &lt;dbl&gt;
+##  1 Act.                 175 
+##  2 Aero                 159.
+##  3 AERO                 140 
+##  4 Aero Eng.            190 
+##  5 AGB                  173.
+##  6 APIO                 195 
+##  7 ARCE                 146.
+##  8 Arch                 210 
+##  9 Bio                  151.
+## 10 Bus                  150.
+## # … with 31 more rows</code></pre>
+<p><em>I used the ‘group_by’ function to find the mean body weights of the college students as a function of their major. This could be used to find which college major has students with largest mean body weight. These results show us that in the dataset Philosophy majors have the largest mean body weight when compared to others. </em></p>
+<pre class="r"><code>Joinedset%&gt;% summarize(mean_BW=mean(BackpackWeight, na.rm=T))</code></pre>
+<pre><code>##    mean_BW
+## 1 11.69506</code></pre>
+<pre class="r"><code>Joinedset%&gt;% summarize(Sd_BodyWeight=sd(BodyWeight, na.rm=T))</code></pre>
+<pre><code>##   Sd_BodyWeight
+## 1      29.45679</code></pre>
+<pre class="r"><code>Joinedset%&gt;% summarize(var_Units=var(Units, na.rm=T))</code></pre>
+<pre><code>##   var_Units
+## 1  8.030025</code></pre>
+<pre class="r"><code>Joinedset%&gt;% summarize(Q1_BW=quantile(Ratio, 0.25, na.rm=T))</code></pre>
+<pre><code>##   Q1_BW
+## 1  0.05</code></pre>
+<pre class="r"><code>Joinedset%&gt;% summarize(Q2_BW=quantile(Ratio, 0.50, na.rm=T))</code></pre>
+<pre><code>##       Q2_BW
+## 1 0.0714286</code></pre>
+<pre class="r"><code>Joinedset%&gt;% summarize(min_units=min(Units, na.rm=T))</code></pre>
+<pre><code>##   min_units
+## 1         0</code></pre>
+<pre class="r"><code>Joinedset%&gt;% summarize(max_vote=max(Vote, na.rm=T))</code></pre>
+<pre><code>##   max_vote
+## 1        3</code></pre>
+<pre class="r"><code>Joinedset%&gt;% summarize(n_distinct(Participate))</code></pre>
+<pre><code>##   n_distinct(Participate)
+## 1                       3</code></pre>
+<pre class="r"><code>Joinedset%&gt;% summarize(n_distinct(TV))</code></pre>
+<pre><code>##   n_distinct(TV)
+## 1              5</code></pre>
+<pre class="r"><code>Joinedset%&gt;% select_if(is.numeric)%&gt;%na.omit%&gt;%cor()</code></pre>
+<pre><code>##                         X.x        Year.x         Vote       Paper        Edit
+## X.x             1.000000000 -0.0061753560 -0.056280051  0.15048201 -0.14994410
+## Year.x         -0.006175356  1.0000000000  0.205021870  0.08303833  0.13965209
+## Vote           -0.056280051  0.2050218700  1.000000000  0.09175565 -0.05436680
+## Paper           0.150482015  0.0830383340  0.091755648  1.00000000  0.50684505
+## Edit           -0.149944100  0.1396520893 -0.054366800  0.50684505  1.00000000
+## TV              0.086411665  0.3316755833  0.003524554  0.06892063 -0.14170748
+## Ethics          0.115318325 -0.0372942773 -0.135364279  0.05743075  0.14910488
+## Inform          0.199452689  0.1602530611  0.198083637  0.57781483  0.27430872
+## Participate     0.003243679  0.2578772877  0.933247250  0.10853046 -0.06337084
+## X.y             0.035090926  0.0014635504 -0.036767190  0.04648396  0.04878267
+## BackpackWeight  0.032846797  0.0013699537 -0.034415861  0.04351122  0.04566293
+## BodyWeight      0.162422015  0.0067741960 -0.170180778  0.21515585  0.22579568
+## Ratio          -0.028661296 -0.0011953874  0.030030422 -0.03796681 -0.03984433
+## BackProblems   -0.075629006 -0.0031542874  0.079241741 -0.10018361 -0.10513786
+## Year.y          0.011897219  0.0004962018 -0.012465539  0.01575991  0.01653926
+## Units          -0.059092870 -0.0024646085  0.061915687 -0.07827866 -0.08214967
+##                          TV      Ethics      Inform  Participate         X.y
+## X.x             0.086411665  0.11531833  0.19945269  0.003243679  0.03509093
+## Year.x          0.331675583 -0.03729428  0.16025306  0.257877288  0.00146355
+## Vote            0.003524554 -0.13536428  0.19808364  0.933247250 -0.03676719
+## Paper           0.068920629  0.05743075  0.57781483  0.108530457  0.04648396
+## Edit           -0.141707480  0.14910488  0.27430872 -0.063370843  0.04878267
+## TV              1.000000000 -0.10298285  0.34375502  0.057573217  0.01259883
+## Ethics         -0.102982848  1.00000000  0.03949918 -0.087781070  0.06784121
+## Inform          0.343755023  0.03949918  1.00000000  0.175723841  0.03782020
+## Participate     0.057573217 -0.08778107  0.17572384  1.000000000 -0.02672888
+## X.y             0.012598829  0.06784121  0.03782020 -0.026728876  1.00000000
+## BackpackWeight  0.011793111  0.06350264  0.03540153 -0.025019516  0.25377530
+## BodyWeight      0.058314998  0.31401010  0.17505475 -0.123717395 -0.08110594
+## Ratio          -0.010290375 -0.05541082 -0.03089049  0.021831406  0.26885205
+## BackProblems   -0.027153372 -0.14621338 -0.08151122  0.057606869 -0.01632805
+## Year.y          0.004271504  0.02300087  0.01282255 -0.009062152 -0.07236228
+## Units          -0.021216340 -0.11424411 -0.06368895  0.045011238  0.25746680
+##                BackpackWeight   BodyWeight        Ratio BackProblems
+## X.x               0.032846797  0.162422015 -0.028661296 -0.075629006
+## Year.x            0.001369954  0.006774196 -0.001195387 -0.003154287
+## Vote             -0.034415861 -0.170180778  0.030030422  0.079241741
+## Paper             0.043511224  0.215155853 -0.037966809 -0.100183608
+## Edit              0.045662929  0.225795683 -0.039844334 -0.105137861
+## TV                0.011793111  0.058314998 -0.010290375 -0.027153372
+## Ethics            0.063502636  0.314010105 -0.055410817 -0.146213383
+## Inform            0.035401530  0.175054753 -0.030890493 -0.081511223
+## Participate      -0.025019516 -0.123717395  0.021831406  0.057606869
+## X.y               0.253775298 -0.081105944  0.268852047 -0.016328054
+## BackpackWeight    1.000000000  0.188411600  0.928313545  0.118573936
+## BodyWeight        0.188411600  1.000000000 -0.135956621 -0.137806771
+## Ratio             0.928313545 -0.135956621  1.000000000  0.182777678
+## BackProblems      0.118573936 -0.137806771  0.182777678  1.000000000
+## Year.y            0.056805383 -0.096349142  0.056094465  0.007133312
+## Units             0.094197407 -0.235086552  0.171468829  0.143041272
+##                       Year.y        Units
+## X.x             0.0118972192 -0.059092870
+## Year.x          0.0004962018 -0.002464609
+## Vote           -0.0124655393  0.061915687
+## Paper           0.0157599100 -0.078278656
+## Edit            0.0165392649 -0.082149671
+## TV              0.0042715042 -0.021216340
+## Ethics          0.0230008662 -0.114244110
+## Inform          0.0128225522 -0.063688952
+## Participate    -0.0090621519  0.045011238
+## X.y            -0.0723622816  0.257466802
+## BackpackWeight  0.0568053827  0.094197407
+## BodyWeight     -0.0963491424 -0.235086552
+## Ratio           0.0560944647  0.171468829
+## BackProblems    0.0071333117  0.143041272
+## Year.y          1.0000000000 -0.028437016
+## Units          -0.0284370156  1.000000000</code></pre>
+<pre class="r"><code>Joinedset %&gt;%group_by(Major)%&gt;%summarize(mean_BW=mean(BackpackWeight,na.rm=T))</code></pre>
+<pre><code>## # A tibble: 41 x 2
+##    Major     mean_BW
+##    &lt;fct&gt;       &lt;dbl&gt;
+##  1 Act.        10   
+##  2 Aero        19.7 
+##  3 AERO         9   
+##  4 Aero Eng.   25   
+##  5 AGB          9   
+##  6 APIO         6   
+##  7 ARCE         9.37
+##  8 Arch        15   
+##  9 Bio         10.6 
+## 10 Bus         13.9 
+## # … with 31 more rows</code></pre>
+<pre class="r"><code>Joinedset %&gt;%group_by(Major,Status)%&gt;%summarize(mean_units=mean(Units,na.rm=T))</code></pre>
+<pre><code>## # A tibble: 44 x 3
+## # Groups:   Major [41]
+##    Major     Status mean_units
+##    &lt;fct&gt;     &lt;fct&gt;       &lt;dbl&gt;
+##  1 Act.      U            19  
+##  2 Aero      U            13.9
+##  3 AERO      U            12  
+##  4 Aero Eng. U            14  
+##  5 AGB       U            14.9
+##  6 APIO      U            16  
+##  7 ARCE      U            15.4
+##  8 Arch      U            17  
+##  9 Bio       U            13.1
+## 10 Bus       U            15.1
+## # … with 34 more rows</code></pre>
+<p><em>In this section, I used the ‘summarize’ function to find summary stats for various numeric variables. I also used the ‘summarize’ function in combination with the ‘group_by’ function to find summary stats of categorical variables</em></p>
+</div>
+<div id="visualizing" class="section level2">
+<h2>4. Visualizing</h2>
+<pre class="r"><code>library(ggplot2)
+ggplot(data = Joinedset, aes(x = BackpackWeight, y = BodyWeight, color = TV)) +
+  geom_point(size=4, alpha= 0.5) + ggtitle(&quot;Body Weight vs Backpack Weight&quot;)+ theme_dark() +scale_x_continuous(breaks=seq(0,40,5))</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-10-1.png" width="672" />
+<em>This plot shows Body Weight as a function of Backpack Weight while comparing the amount of times the students watched TV News in one week. There seems to be a positive correlation between the the Backpack weights and body weights. In the plot you can also see that college students with higher body weights tend to watch TV news more often than those of a lower body weight. </em></p>
+<pre class="r"><code>ggplot(data = Joinedset, aes(x = Units, y = Ratio, color = Sex)) +
+  geom_point(size=4, alpha= 0.5)+ ylab(&quot;Ratio (Backpackweight/Bodyweight&quot;) + ggtitle(&quot;Units Taken vs Ratio&quot;) + theme(plot.background = element_rect(fill=&quot;Grey&quot;))</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-11-1.png" width="672" />
+<em>This plot shows the relationship between the number of units taken by students and the ratio of their backpack to bodyweight. It shows that most students took over 10 units and also shows that more females tend to have a higher ratio.</em></p>
+</div>
+<div id="dimensionality-reduction" class="section level2">
+<h2>5. Dimensionality Reduction</h2>
+<pre class="r"><code>Joinedset1&lt;-Joinedset%&gt;%select(-Sex,-Major,-Status)
+Joinedset_nums&lt;-Joinedset1%&gt;%select_if(is.numeric)%&gt;%na.omit%&gt;%scale
+rownames(Joinedset_nums)&lt;-Joinedset1$Name
+Joinedset_pca&lt;-princomp(Joinedset_nums)
+names(Joinedset_pca)</code></pre>
+<pre><code>## [1] &quot;sdev&quot;     &quot;loadings&quot; &quot;center&quot;   &quot;scale&quot;    &quot;n.obs&quot;    &quot;scores&quot;   &quot;call&quot;</code></pre>
+<pre class="r"><code> summary(Joinedset_pca, loadings=T)</code></pre>
+<pre><code>## Importance of components:
+##                           Comp.1    Comp.2    Comp.3     Comp.4     Comp.5
+## Standard deviation     1.5358983 1.5020213 1.4541857 1.15649905 1.10689441
+## Proportion of Variance 0.1474902 0.1410556 0.1322142 0.08362359 0.07660386
+## Cumulative Proportion  0.1474902 0.2885458 0.4207600 0.50438360 0.58098745
+##                            Comp.6     Comp.7     Comp.8    Comp.9    Comp.10
+## Standard deviation     1.06437793 1.02240032 0.98973497 0.9252347 0.83318984
+## Proportion of Variance 0.07083208 0.06535521 0.06124577 0.0535232 0.04340364
+## Cumulative Proportion  0.65181953 0.71717474 0.77842051 0.8319437 0.87534735
+##                           Comp.11    Comp.12    Comp.13    Comp.14     Comp.15
+## Standard deviation     0.81758034 0.75555599 0.59136689 0.57421806 0.240517812
+## Proportion of Variance 0.04179258 0.03569206 0.02186514 0.02061541 0.003616869
+## Cumulative Proportion  0.91713993 0.95283199 0.97469713 0.99531254 0.998929404
+##                            Comp.16
+## Standard deviation     0.130856007
+## Proportion of Variance 0.001070596
+## Cumulative Proportion  1.000000000
+## 
+## Loadings:
+##                Comp.1 Comp.2 Comp.3 Comp.4 Comp.5 Comp.6 Comp.7 Comp.8 Comp.9
+## X.x             0.140                0.385  0.321  0.354  0.430  0.131  0.111
+## Year.x          0.273 -0.167         0.243 -0.147 -0.201 -0.440 -0.322  0.252
+## Vote            0.291 -0.462 -0.247 -0.213  0.253                            
+## Paper           0.469         0.185 -0.175 -0.222         0.252  0.187       
+## Edit            0.305  0.176  0.202 -0.457 -0.311 -0.160 -0.105              
+## TV              0.215                0.662 -0.180 -0.127 -0.159              
+## Ethics                 0.250  0.179 -0.140  0.371  0.217 -0.135 -0.359  0.461
+## Inform          0.497         0.125  0.145 -0.162         0.220  0.151       
+## Participate     0.312 -0.449 -0.236 -0.162  0.291                            
+## X.y                   -0.149  0.303        -0.250  0.514        -0.269       
+## BackpackWeight        -0.249  0.586         0.218 -0.158               -0.125
+## BodyWeight      0.218  0.312  0.218         0.324        -0.271  0.165  0.165
+## Ratio          -0.136 -0.361  0.511         0.116 -0.155               -0.184
+## BackProblems   -0.140 -0.242                      -0.233         0.518  0.699
+## Year.y                                            -0.463  0.599 -0.553  0.179
+## Units          -0.143 -0.265               -0.386  0.383  0.101         0.322
+##                Comp.10 Comp.11 Comp.12 Comp.13 Comp.14 Comp.15 Comp.16
+## X.x             0.537                   0.203   0.190                 
+## Year.x          0.542                  -0.304  -0.143                 
+## Vote                                                    0.707         
+## Paper                                   0.134  -0.727                 
+## Edit            0.212                   0.426   0.510                 
+## TV             -0.384                   0.524                         
+## Ethics         -0.252  -0.155   0.486                                 
+## Inform         -0.281           0.201  -0.587   0.373                 
+## Participate                             0.162          -0.695         
+## X.y                    -0.533  -0.443                                 
+## BackpackWeight          0.119                                  -0.693 
+## BodyWeight     -0.186   0.316  -0.614  -0.107                   0.224 
+## Ratio                           0.215                           0.684 
+## BackProblems           -0.309                                         
+## Year.y                         -0.277                                 
+## Units          -0.159   0.678</code></pre>
+<pre class="r"><code> eigval&lt;-Joinedset_pca$sdev^2 
+ varprop=round(eigval/sum(eigval),2)
+ ggplot()+geom_bar(aes(y=varprop,x=1:16),stat=&quot;identity&quot;)+xlab(&quot;&quot;)+geom_path(aes(y=varprop,x=1:16))+
+  geom_text(aes(x=1:16,y=varprop,label=round(varprop,2)),vjust=1,col=&quot;white&quot;,size=5)+
+  scale_y_continuous(breaks=seq(0,.2,.05),labels = scales::percent)+
+  scale_x_continuous(breaks=1:10)</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<pre class="r"><code> round(cumsum(eigval)/sum(eigval),2)</code></pre>
+<pre><code>##  Comp.1  Comp.2  Comp.3  Comp.4  Comp.5  Comp.6  Comp.7  Comp.8  Comp.9 Comp.10 
+##    0.15    0.29    0.42    0.50    0.58    0.65    0.72    0.78    0.83    0.88 
+## Comp.11 Comp.12 Comp.13 Comp.14 Comp.15 Comp.16 
+##    0.92    0.95    0.97    1.00    1.00    1.00</code></pre>
+<pre class="r"><code> eigval</code></pre>
+<pre><code>##     Comp.1     Comp.2     Comp.3     Comp.4     Comp.5     Comp.6     Comp.7 
+## 2.35898354 2.25606797 2.11465604 1.33749005 1.22521523 1.13290038 1.04530241 
+##     Comp.8     Comp.9    Comp.10    Comp.11    Comp.12    Comp.13    Comp.14 
+## 0.97957531 0.85605923 0.69420531 0.66843761 0.57086485 0.34971479 0.32972638 
+##    Comp.15    Comp.16 
+## 0.05784882 0.01712329</code></pre>
+<pre class="r"><code> summary(Joinedset_pca, loadings=T)</code></pre>
+<pre><code>## Importance of components:
+##                           Comp.1    Comp.2    Comp.3     Comp.4     Comp.5
+## Standard deviation     1.5358983 1.5020213 1.4541857 1.15649905 1.10689441
+## Proportion of Variance 0.1474902 0.1410556 0.1322142 0.08362359 0.07660386
+## Cumulative Proportion  0.1474902 0.2885458 0.4207600 0.50438360 0.58098745
+##                            Comp.6     Comp.7     Comp.8    Comp.9    Comp.10
+## Standard deviation     1.06437793 1.02240032 0.98973497 0.9252347 0.83318984
+## Proportion of Variance 0.07083208 0.06535521 0.06124577 0.0535232 0.04340364
+## Cumulative Proportion  0.65181953 0.71717474 0.77842051 0.8319437 0.87534735
+##                           Comp.11    Comp.12    Comp.13    Comp.14     Comp.15
+## Standard deviation     0.81758034 0.75555599 0.59136689 0.57421806 0.240517812
+## Proportion of Variance 0.04179258 0.03569206 0.02186514 0.02061541 0.003616869
+## Cumulative Proportion  0.91713993 0.95283199 0.97469713 0.99531254 0.998929404
+##                            Comp.16
+## Standard deviation     0.130856007
+## Proportion of Variance 0.001070596
+## Cumulative Proportion  1.000000000
+## 
+## Loadings:
+##                Comp.1 Comp.2 Comp.3 Comp.4 Comp.5 Comp.6 Comp.7 Comp.8 Comp.9
+## X.x             0.140                0.385  0.321  0.354  0.430  0.131  0.111
+## Year.x          0.273 -0.167         0.243 -0.147 -0.201 -0.440 -0.322  0.252
+## Vote            0.291 -0.462 -0.247 -0.213  0.253                            
+## Paper           0.469         0.185 -0.175 -0.222         0.252  0.187       
+## Edit            0.305  0.176  0.202 -0.457 -0.311 -0.160 -0.105              
+## TV              0.215                0.662 -0.180 -0.127 -0.159              
+## Ethics                 0.250  0.179 -0.140  0.371  0.217 -0.135 -0.359  0.461
+## Inform          0.497         0.125  0.145 -0.162         0.220  0.151       
+## Participate     0.312 -0.449 -0.236 -0.162  0.291                            
+## X.y                   -0.149  0.303        -0.250  0.514        -0.269       
+## BackpackWeight        -0.249  0.586         0.218 -0.158               -0.125
+## BodyWeight      0.218  0.312  0.218         0.324        -0.271  0.165  0.165
+## Ratio          -0.136 -0.361  0.511         0.116 -0.155               -0.184
+## BackProblems   -0.140 -0.242                      -0.233         0.518  0.699
+## Year.y                                            -0.463  0.599 -0.553  0.179
+## Units          -0.143 -0.265               -0.386  0.383  0.101         0.322
+##                Comp.10 Comp.11 Comp.12 Comp.13 Comp.14 Comp.15 Comp.16
+## X.x             0.537                   0.203   0.190                 
+## Year.x          0.542                  -0.304  -0.143                 
+## Vote                                                    0.707         
+## Paper                                   0.134  -0.727                 
+## Edit            0.212                   0.426   0.510                 
+## TV             -0.384                   0.524                         
+## Ethics         -0.252  -0.155   0.486                                 
+## Inform         -0.281           0.201  -0.587   0.373                 
+## Participate                             0.162          -0.695         
+## X.y                    -0.533  -0.443                                 
+## BackpackWeight          0.119                                  -0.693 
+## BodyWeight     -0.186   0.316  -0.614  -0.107                   0.224 
+## Ratio                           0.215                           0.684 
+## BackProblems           -0.309                                         
+## Year.y                         -0.277                                 
+## Units          -0.159   0.678</code></pre>
+<pre class="r"><code> eigen(cor(Joinedset_nums))</code></pre>
+<pre><code>## eigen() decomposition
+## $values
+##  [1] 2.35984322 2.25689016 2.11542668 1.33797748 1.22566174 1.13331324
+##  [7] 1.04568335 0.97993230 0.85637120 0.69445830 0.66868121 0.57107290
+## [13] 0.34984224 0.32984654 0.05786990 0.01712953
+## 
+## $vectors
+##               [,1]         [,2]         [,3]         [,4]        [,5]
+##  [1,] -0.139916728  0.091892870 -0.091447912  0.384515652  0.32095765
+##  [2,] -0.272742583 -0.167235109  0.046845454  0.243499213 -0.14685969
+##  [3,] -0.291177547 -0.461783967  0.247027714 -0.213247407  0.25335804
+##  [4,] -0.469258073  0.089167533 -0.185335073 -0.174544665 -0.22157957
+##  [5,] -0.304544745  0.175884372 -0.202172500 -0.457090658 -0.31145305
+##  [6,] -0.215072539 -0.073339420 -0.002595196  0.662298520 -0.18023190
+##  [7,] -0.084737294  0.250475220 -0.178676708 -0.140393129  0.37057621
+##  [8,] -0.496636666 -0.005305751 -0.125146594  0.145397288 -0.16155323
+##  [9,] -0.312174668 -0.449044368  0.235784664 -0.162111121  0.29117772
+## [10,]  0.038781456 -0.149363768 -0.303218876 -0.008444158 -0.24980231
+## [11,]  0.057689318 -0.248738788 -0.585842784  0.016783543  0.21754037
+## [12,] -0.217988201  0.312251212 -0.217818301  0.031418002  0.32366455
+## [13,]  0.136015176 -0.361182471 -0.510645482  0.006498351  0.11583086
+## [14,]  0.139512380 -0.242415621 -0.019970780 -0.013377402 -0.07314610
+## [15,]  0.006638327 -0.021741101 -0.031690419 -0.001456009  0.04953897
+## [16,]  0.142840356 -0.265141282 -0.072449390 -0.025501893 -0.38565326
+##              [,6]         [,7]        [,8]         [,9]        [,10]
+##  [1,]  0.35371398  0.429916306  0.13070914  0.111151428  0.536901771
+##  [2,] -0.20067842 -0.439696976 -0.32205154  0.251770969  0.541637630
+##  [3,]  0.08266127 -0.004189866 -0.01127491 -0.039673256 -0.092146261
+##  [4,]  0.01020625  0.251555666  0.18733531 -0.058091567  0.047732394
+##  [5,] -0.15952465 -0.104949050 -0.04366353  0.061200885  0.211508446
+##  [6,] -0.12742997 -0.158967573 -0.07036608 -0.011643039 -0.383812930
+##  [7,]  0.21671098 -0.134844218 -0.35916771  0.461319197 -0.252119732
+##  [8,]  0.03016214  0.220017189  0.15092132 -0.046508346 -0.281119135
+##  [9,]  0.09782960 -0.031889075 -0.05112267 -0.003135646 -0.049958522
+## [10,]  0.51408318 -0.035579623 -0.26852762  0.002971412  0.007518696
+## [11,] -0.15796458 -0.081204294  0.04294476 -0.124855527 -0.008198125
+## [12,] -0.01243715 -0.270698932  0.16472220  0.165269545 -0.185826512
+## [13,] -0.15492034 -0.014141242  0.02282001 -0.183675382  0.056240654
+## [14,] -0.23348206  0.066906982  0.51772833  0.698685245 -0.006855780
+## [15,] -0.46265245  0.598822622 -0.55251766  0.178759110 -0.085074233
+## [16,]  0.38287924  0.101219011 -0.08833056  0.321985220 -0.159237591
+##               [,11]        [,12]        [,13]        [,14]        [,15]
+##  [1,]  7.382977e-02  0.020403416 -0.203483679 -0.190206694  0.040546879
+##  [2,]  7.074696e-02  0.042028527  0.304094759  0.142582891  0.030519767
+##  [3,] -5.432465e-05 -0.071073088 -0.048794890 -0.082936758  0.706985434
+##  [4,] -1.881699e-03  0.070692386 -0.133514620  0.727225989  0.045967771
+##  [5,]  2.871243e-02 -0.008259796 -0.425841433 -0.510235818 -0.007835097
+##  [6,] -6.926153e-02  0.020129896 -0.523858941 -0.028934203  0.053434946
+##  [7,] -1.552214e-01  0.486116705 -0.055337318  0.077989553  0.031442627
+##  [8,] -7.588724e-02  0.200664144  0.587020546 -0.373288533 -0.084674892
+##  [9,]  6.602380e-03 -0.091775493 -0.161856962  0.012543411 -0.695469864
+## [10,] -5.334388e-01 -0.443274039  0.051700686  0.012572562  0.008462750
+## [11,]  1.188136e-01  0.005184636  0.007700865  0.001937407 -0.004926569
+## [12,]  3.156386e-01 -0.613874488  0.107200725  0.026571431  0.023327800
+## [13,]  1.893610e-02  0.214753287 -0.023540531 -0.005623325  0.003478728
+## [14,] -3.090107e-01 -0.067231297 -0.020666733 -0.005438858 -0.006445023
+## [15,]  2.719997e-02 -0.276760666  0.030918077  0.007453844  0.004710584
+## [16,]  6.775953e-01  0.041238935 -0.011405506 -0.002991156 -0.003695933
+##               [,16]
+##  [1,] -0.0031887266
+##  [2,]  0.0009387586
+##  [3,]  0.0101022182
+##  [4,] -0.0019601774
+##  [5,] -0.0047717055
+##  [6,] -0.0020216845
+##  [7,] -0.0074331903
+##  [8,] -0.0021369193
+##  [9,] -0.0063884253
+## [10,] -0.0100460744
+## [11,]  0.6933292937
+## [12,] -0.2239783521
+## [13,] -0.6842025611
+## [14,]  0.0097899557
+## [15,] -0.0234250046
+## [16,] -0.0022610896</code></pre>
+<pre class="r"><code>Joinedsetdf&lt;-data.frame(PC1=Joinedset_pca$scores[,1], PC8=Joinedset_pca$scores[,8])
+ggplot(Joinedsetdf,aes(PC1, PC8))+geom_point()</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<pre class="r"><code>results&lt;-Joinedset%&gt;%as.data.frame%&gt;% mutate(PC1=Joinedset_pca$x[,1],PC2=Joinedset_pca$x[,2],
+         PC3=Joinedset_pca$x[,3],PC4=Joinedset_pca$x[,4])
+results%&gt;%ggplot(aes(BodyWeight,BackpackWeight,color=Vote, shape=Sex))+geom_point(size=4)</code></pre>
+<p><img src="/Project1_files/figure-html/unnamed-chunk-13-2.png" width="672" /></p>
+<p>Note that the <code>echo = FALSE</code> parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
+</div>
+
+              <hr>
+              <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div>
+            </div>
+          </div>
+          <hr>
+        <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+        </div>
+      </div>
+      
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/docs.min.js"></script>
+<script src="/js/main.js"></script>
+
+<script src="/js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

@@ -1,0 +1,14 @@
+"0","library(readr)"
+"0","turnout <- read_csv(""turnout.csv"")"
+"2","Missing column names filled in: 'X1' [1]"
+"2","Parsed with column specification:
+cols(
+  X1 = [32mcol_double()[39m,
+  race = [31mcol_character()[39m,
+  age = [32mcol_double()[39m,
+  educate = [32mcol_double()[39m,
+  income = [32mcol_double()[39m,
+  vote = [32mcol_double()[39m
+)
+"
+"0","turnout$X1<-NULL"

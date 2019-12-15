@@ -1,0 +1,215 @@
+---
+title: "Hp7642 Project 2"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+
+
+- **0. (5 pts)** Introduce your dataset and each of your variables (or just your main variables if you have lots) in a paragraph.
+
+```{r cars}
+library(readr)
+turnout <- read_csv("~/turnout.csv")
+turnout$X1<-NULL
+```
+*This data set represents the voter turnout for the 1992 election year. It contains 2000 observations and contains 5 variables. These five variables include: race, age, educate, income, and vote. The dataset has one categorical variable (race), three numeric variables (age, educate, and income), and one binary variable (vote). The race variable indicates whether the individual is white or a different race. The "age"" represents the numeric age of the individual. "Educate" represents the highest level of education reached by that individual. The "income" variable represents the amount of income recieved by the individual. The "voter" variable represents whether or not that individual voted.*
+
+**1. (15 pts)** Perform a MANOVA testing whether any of your numeric variables (or a subset of them, if including them all doesn't make sense) show a mean difference across levels of one of your categorical variables (3). If they do, perform univariate ANOVAs to find response(s) showing a mean difference across groups (3), and perform post-hoc t tests to find which groups differ (3). Discuss the number of tests you have performed, calculate the probability of at least one type I error (if unadjusted), and adjust the significance level accordingly (bonferroni correction) before discussing significant differences (3). Briefly discuss assumptions and whether or not they are likely to have been met (2).
+
+```{r }
+race<-turnout$race
+age<-turnout$age
+income<-turnout$income
+res.man <- manova(cbind(age, income) ~ race, data = turnout)
+summary(res.man)
+summary.aov(res.man)
+t.test<-pairwise.t.test(age, income, p.adj = "none")
+1-(.95)^7
+bonferroni.t.test<-pairwise.t.test(age, income, p.adj = "bonferroni")
+
+```
+*MANOVA test showed that there was a significant difference among the the means of the numeric variables. The Univariate Anova shows that only the income differs among the different races. Seven different test were performed, therefore the probability of a type I error would be 30.166%. The assumptions of the MANOVA test include independence, multivariate normality, homogeneity of covariance matrices, linear relationships among DV's, No extreme univariate or multivariate outliers, no multicollinearity. MANOVA has alot of assumptions and they are to test and they are not likely to be met. *
+
+**2. (10 pts)** Perform some kind of randomization test on your data (that makes sense). This can be anything you want! State null and alternative hypotheses, perform the test, and interpret the results (7). Create a plot visualizing the null distribution and the test statistic (3).
+
+```{r }
+vote<-turnout$vote
+hist(age)
+normal.age<-log(age)
+hist(normal.age)
+t.test(normal.age~vote)
+
+
+```
+*I decided to run a T-test to see if their is a significant difference between the two mean groups of the binary "vote" variable.The null hypothesis for this test would be that there is no significant difference between the two means. The alternative hypothesis is that there is a significant difference between the means of the two "vote" groups.Before running the two-way t-test, I wanted to see if the data was normally distributed and it was not. Therefore, i performed a log transformation on the age data and ran the t-test with the new transformed data. The  Results of this t-test show that there was a significant difference with a p-value of 0.0002055. We can therefore reject our null and accept our alternative hypothesis* 
+
+**3. (35 pts)** Build a linear regression model predicting one of your response variables from at least 2 other variables, including their interaction. Mean-center any numeric variables involved in the interaction.
+
+```{r }
+library(ggplot2)
+library(lmtest)
+library(sandwich)
+educate_c <- turnout$educate - mean(turnout$educate)
+age_c <- turnout$age - mean(turnout$age)
+vote_c<- turnout$vote - mean(turnout$vote)
+fit_int<-lm(educate_c ~ age_c*race, data=turnout)
+summary(fit_int)
+ggplot(turnout, aes(x=age_c, y=educate_c,group=race))+geom_point(aes(color=race))+
+  geom_smooth(method="lm",formula=y~1,se=F,fullrange=T,aes(color=race))+
+theme(legend.position=c(.9,.19))+xlab("")
+plot(fit_int, 1)
+plot(fit_int, 2)
+plot(fit_int, 3)
+fit_int2 <- lm(sqrt(educate_c) ~ age_c*race, data = turnout)
+plot(fit_int2, 3)
+coeftest(fit_int, vcov = vcovHC(fit_int))[,1:2]
+fit_c<-lm(educate_c ~ age_c + race, data=turnout)
+summary(fit_c)
+lrtest(fit_c,fit_int)
+
+
+```
+*The model shows that when controling for race, there is a significant effect of age on education level. For every increased age, there is a 0.08837 decrease in education level. Similarly, when controlling for age, there is a significant effect of race on education level. White individuals have are 1.42465 times more likely to have a higher education than non-white. The standard errors slightly increased after running the regression with rubust standard errors.The proportion of variation in the outcome that the model can explain is 11.96% as the r-squared value is 0.1196.*
+
+**4. (5 pts)** Rerun same regression model (with interaction), but this time compute bootstrapped standard errors. Discuss any changes you observe in SEs and p-values using these SEs compared to the original SEs and the robust SEs)
+
+```{r }
+library(magrittr) 
+library(dplyr) 
+
+boot_turnout<-turnout[sample(nrow(turnout),replace=TRUE),]
+glimpse(samp_distn<-replicate(5000, {
+  boot_turnout<-turnout[sample(nrow(turnout),replace=TRUE),]
+  fit_boot<-lm(sqrt(educate_c) ~ age_c*race, data = boot_turnout)
+  coef(fit_boot)
+}))
+
+samp_distn%>%t%>%as.data.frame%>%summarize_all(sd)
+
+
+```
+*Bootstrapping the SE's decreased them all. The intercept, age_c, racewhite, and age_c:racewhite all decreased when compared to the unboostraped model, meaning boostrapping makes the model prone to less error.*
+
+**5. (40 pts)** Perform a logistic regression predicting a binary categorical variable (if you don't have one, make/get one) from at least two explanatory variables (interaction not necessary). 
+
+```{r }
+library(plotROC)
+library(lmtest)
+library(sandwich)
+
+library(magrittr)
+fit5<-glm(vote~educate + age,data=turnout,family=binomial(link="logit"))
+coeftest(fit5)
+exp(0.2311366)
+exp(0.0284300)
+prob.vote<-predict(fit5, type="response")
+table(truth=turnout$vote,predict=as.numeric(prob.vote>0.5) )%>%addmargins
+
+#Accuracy
+(52+1449)/2000
+#Sensitivity
+(1449/1492)
+#Specificity
+(52/508)
+#Precision
+(1449/1905)
+
+turnout$logit<-predict(fit5) 
+turnout$vote<-factor(turnout$vote,levels=c("0","1"))
+ggplot(turnout,aes(logit,fill=vote))+geom_density(alpha=.3)+geom_vline(xintercept=0,lty=2)
+
+turnout2<-turnout%>%mutate(prob=predict(fit5, type="response"), prediction=ifelse(prob>.5,1,0))
+
+newdata<-turnout2%>%transmute(prob,prediction,truth=vote)
+newdata%>%glimpse()
+ROCplot<-ggplot(newdata)+geom_roc(aes(d=truth,m=prob), n.cuts=0)
+ROCplot
+calc_auc(ROCplot)
+
+class_diag<-function(probs,truth){
+  
+tab<-table(factor(probs>.5,levels=c("FALSE","TRUE")),truth) 
+acc=sum(diag(tab))/sum(tab)
+sens=tab[2,2]/colSums(tab)[2]
+spec=tab[1,1]/colSums(tab)[1]
+ppv=tab[2,2]/rowSums(tab)[2]
+if(is.numeric(truth)==FALSE & is.logical(truth)==FALSE) truth<-as.numeric(truth)-1
+ord<-order(probs, decreasing=TRUE)
+probs <- probs[ord]; 
+truth <- truth[ord]
+TPR=cumsum(truth)/max(1,sum(truth)) 
+FPR=cumsum(!truth)/max(1,sum(!truth))
+dup<-c(probs[-1]>=probs[-length(probs)], FALSE) 
+TPR<-c(0,TPR[!dup],1); 
+FPR<-c(0,FPR[!dup],1)
+n <- length(TPR)
+auc<- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+data.frame(acc,sens,spec,ppv,auc) }
+
+set.seed(1234)
+k=10
+data3<-newdata[sample(nrow(newdata)),] 
+folds4<-cut(seq(1:nrow(newdata)),breaks=k,labels=F) 
+diags4<-NULL
+for(i in 1:k){
+train<-data3[folds4!=i,]
+test<-data3[folds4==i,]
+truth<-test$prob
+fit<-glm(prob~(.)^2,data=train,family="binomial") 
+probs<-predict(fit,newdata = test,type="response") 
+diags5<-rbind(diags4,class_diag(probs,truth))
+}
+apply(diags5,2,mean)
+
+```
+*This model tells us that for every one-unit increase in education multiplies odds of voting by 1.26. Similarly,for every one-unit increase in age multiplies odds of voting by 1.0288. The accuracy of this model was 75.05%. Meaning 75.05% of the individuals were correctly placed into non-voter or voter. The sensitivity or TPR was 0.9712. Meaning, 97.12% of the individuals who voted were actually labeled voter. The specificity or TNR for the model is 0.1023622, meaning that about 0.24% the non-voters were labled as non voter. The PPV for the model was 0.7606299, meaning that 76.06% of the individuals that were predicted to be a voter actually voted. I could not get the ROC curve to plot. However, the AUC could be found using the area under the curve. The AUC would tell me how good the model is at predicting the voting individuals.The 10-fold CV had an acc(0.005), sens(0.000), spec(1.000), ppv (0.00) and an auc(1.00). Seen that the auc is extremely, that shows that this model is a good indicator of whoch individuals vote.*
+
+**6. (10 pts)** Choose one variable you want to predict (can be one you used from before; either binary or continuous) and run a LASSO regression inputting all the rest of your variables as predictors. Choose lambda to give the simplest model whose accuracy is near that of the best (i.e., `lambda.1se`). Discuss which variables are retained. Perform 10-fold CV using this model: if response in binary, compare model's out-of-sample accuracy to that of your logistic regression in part 5; if response is numeric, compare the residual standard error (at the bottom of the summary output, aka RMSE): lower is better fit!
+
+```{r }
+fit3<-lm(income~., data=turnout)
+yhat<-predict(fit3) 
+mean((turnout$income-yhat)^2)
+
+library(glmnet)
+y<-as.matrix(turnout$income)
+x<-turnout%>%dplyr::select(age, educate)%>%mutate_all(scale)%>%as.matrix
+cv<-cv.glmnet(x,y) 
+lasso1<-glmnet(x,y,lambda=cv$lambda.1se) 
+coef(lasso1)
+
+
+set.seed(1234)
+k=10
+data1<-turnout[sample(nrow(turnout)),]
+folds<-cut(seq(1:nrow(turnout)),breaks=k,labels=F) 
+diags<-NULL
+for(i in 1:k){
+train<-data1[folds!=i,] 
+test<-data1[folds==i,] 
+fit4<-lm(income~age+educate,data=turnout) 
+yhat2<-predict(fit4,newdata=test) 
+diags<-mean((test$income-yhat2)^2)
+} 
+mean(diags)
+```
+*The variable retained in the lasso regression was "educate". This indicated that aducate was the a better predictor than age. The lower CV indicates a better fit.* 
+
+```{r include=FALSE}
+knitr::opts_chunk$set(comment = NA)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

@@ -1,0 +1,140 @@
+---
+title: "Project One"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+## Helen Piedra (Hp7642)
+
+## Introduction: 
+*I chose the datasets: Backpack and Political. Backpack contains the weights of a sample of college students. There are 100 observations and 9 variables including: BackpackWeight, BodyWeight, Ratio, BackProblems, Major, Year, Sex, Status, and Units. The Political data set contains political activity of 59 college students. There are 59 observations and 9 variables including: Year, Sex, Vote, Paper, Edit, TV, Ethics, Inform, and Participate. These datasets were interesting to me because I am a college student myself and it would be interesting to find any correlations between a few random variables. I expect to find at least one correlation when comparing the variables. One potential association I expect to see if that students with heavier backpacks may have increased voter participation due to a potential increased interest in education.*
+
+```{r cars}
+Political <- read.csv("https://vincentarelbundock.github.io/Rdatasets/csv/Stat2Data/Political.csv")
+Backpack <- read.csv("https://vincentarelbundock.github.io/Rdatasets/csv/Stat2Data/Backpack.csv")
+
+```
+
+## 1. Tidying: Rearranging Wide/Long 
+```{R}
+library(dplyr)
+library(tidyr)
+```
+
+## 2. Joining/Merging
+```{R}
+Political2<-Political%>% mutate(Sex= case_when(Sex == 0 ~ "Male", Sex == 1 ~ "Female"))
+Joinedset<-full_join(Political2,Backpack,by="Sex")
+
+```
+*I chose to do a full merge of the two datasets using the 'full_join' function because this allowed me to combine all variables including the common variable "Sex". No variables were dropped when performing the full joining of the two datasets.*
+
+## 3. Wrangling 
+```{R}
+glimpse(Joinedset%>% filter(Major == "Bio"))
+```
+*I used the 'filter' function to filter out all the college students in the data set who are biology majors.*
+
+```{R}
+glimpse(Joinedset %>% arrange(Ratio))
+```
+*I used the 'arrange' function to arrange the dataset by increasing ratios of Backpack to BodyWeight. Using this function we are able to see that the minimum body weight is 125lbs and the maximum body weight is 220lbs. *
+
+```{R}
+glimpse(Joinedset%>% select(starts_with("s")))
+
+```
+*I used the 'select' function to pull out the variables Sex and Status. Within the select function I was able to pull out both variables using 'starts_with' to select for the variables starting with the letter "s". *
+
+```{R}
+ Joinedset%>% summarize(mean(BodyWeight, na.rm=T))
+```
+*I used to summarize function to find the mean body weight of all the college students in the dataset. The mean body weight of all college students in the joined dataset is 153.93 lbs*
+
+```{R}
+Political2<-Political %>% mutate(Sex= case_when(Sex == 0 ~ "Male", Sex == 1 ~ "Female"))
+```
+*I used the mutate function in order to change the numeric values for sex of one dataset into categorical values so values would match up for the 'Sex' varibles in both datasets Backpack and Political.* 
+
+```{R}
+Joinedset %>%
+  group_by(Major) %>%
+  summarize(mean_BodyWeight=mean(BodyWeight,na.rm=T))
+```
+*I used the 'group_by' function to find the mean body weights of the college students as a function of their major. This could be used to find which college major has students with largest mean body weight. These results show us that in the dataset Philosophy majors have the largest mean body weight when compared to others. *
+
+```{R}
+Joinedset%>% summarize(mean_BW=mean(BackpackWeight, na.rm=T))
+Joinedset%>% summarize(Sd_BodyWeight=sd(BodyWeight, na.rm=T))
+Joinedset%>% summarize(var_Units=var(Units, na.rm=T))
+Joinedset%>% summarize(Q1_BW=quantile(Ratio, 0.25, na.rm=T))
+Joinedset%>% summarize(Q2_BW=quantile(Ratio, 0.50, na.rm=T))
+Joinedset%>% summarize(min_units=min(Units, na.rm=T))
+Joinedset%>% summarize(max_vote=max(Vote, na.rm=T))
+Joinedset%>% summarize(n_distinct(Participate))
+Joinedset%>% summarize(n_distinct(TV))
+Joinedset%>% select_if(is.numeric)%>%na.omit%>%cor()
+Joinedset %>%group_by(Major)%>%summarize(mean_BW=mean(BackpackWeight,na.rm=T))
+Joinedset %>%group_by(Major,Status)%>%summarize(mean_units=mean(Units,na.rm=T))
+```
+*In this section, I used the 'summarize' function to find summary stats for various numeric variables. I also used the 'summarize' function in combination with the 'group_by' function to find summary stats of categorical variables*
+
+
+## 4. Visualizing 
+```{R}
+library(ggplot2)
+ggplot(data = Joinedset, aes(x = BackpackWeight, y = BodyWeight, color = TV)) +
+  geom_point(size=4, alpha= 0.5) + ggtitle("Body Weight vs Backpack Weight")+ theme_dark() +scale_x_continuous(breaks=seq(0,40,5))
+```
+*This plot shows Body Weight as a function of Backpack Weight while comparing the amount of times the students watched TV News in one week. There seems to be a positive correlation between the the Backpack weights and body weights. In the plot you can also see that college students with higher body weights tend to watch TV news more often than those of a lower body weight. *
+
+```{R}
+ggplot(data = Joinedset, aes(x = Units, y = Ratio, color = Sex)) +
+  geom_point(size=4, alpha= 0.5)+ ylab("Ratio (Backpackweight/Bodyweight") + ggtitle("Units Taken vs Ratio") + theme(plot.background = element_rect(fill="Grey"))
+```
+*This plot shows the relationship between the number of units taken by students and the ratio of their backpack to bodyweight. It shows that most students took over 10 units and also shows that more females tend to have a higher ratio.*
+
+## 5. Dimensionality Reduction 
+```{R}
+
+Joinedset1<-Joinedset%>%select(-Sex,-Major,-Status)
+Joinedset_nums<-Joinedset1%>%select_if(is.numeric)%>%na.omit%>%scale
+rownames(Joinedset_nums)<-Joinedset1$Name
+Joinedset_pca<-princomp(Joinedset_nums)
+names(Joinedset_pca)
+
+ summary(Joinedset_pca, loadings=T)
+ eigval<-Joinedset_pca$sdev^2 
+ varprop=round(eigval/sum(eigval),2)
+ ggplot()+geom_bar(aes(y=varprop,x=1:16),stat="identity")+xlab("")+geom_path(aes(y=varprop,x=1:16))+
+  geom_text(aes(x=1:16,y=varprop,label=round(varprop,2)),vjust=1,col="white",size=5)+
+  scale_y_continuous(breaks=seq(0,.2,.05),labels = scales::percent)+
+  scale_x_continuous(breaks=1:10)
+ 
+```
+
+```{R}
+ round(cumsum(eigval)/sum(eigval),2)
+ eigval
+ summary(Joinedset_pca, loadings=T)
+ eigen(cor(Joinedset_nums))
+Joinedsetdf<-data.frame(PC1=Joinedset_pca$scores[,1], PC8=Joinedset_pca$scores[,8])
+ggplot(Joinedsetdf,aes(PC1, PC8))+geom_point()
+results<-Joinedset%>%as.data.frame%>% mutate(PC1=Joinedset_pca$x[,1],PC2=Joinedset_pca$x[,2],
+         PC3=Joinedset_pca$x[,3],PC4=Joinedset_pca$x[,4])
+results%>%ggplot(aes(BodyWeight,BackpackWeight,color=Vote, shape=Sex))+geom_point(size=4)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
