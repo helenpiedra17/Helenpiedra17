@@ -7,6 +7,27 @@ categories: []
 tags: []
 description: ''
 ---
-'During the fall 2019 semester we had the opportunity to work with R studio and Python. Using R studio we completed two projects using various different data dets. Using python we were able to create functions to analyze DNA and amino acid sequences.'
+'During the fall 2019 semester we had the opportunity to work with R studio and Python. Using R studio we completed two projects using various different data dets. Using python we were able to create functions to analyze DNA and amino acid sequences.
+
+Example) I was able to create a function that can take a DNA sequence and break up into 3-mers. A function was also used to count the number of 3-mers created by the previous function. 
+
+The function sequences used were:
+
+my_seq1 = "ATCATCATG"
+my_seq2 = "CAGCCCAATCAGGCTCTACTGCCACTAAACTTACGCAGGATATATTTACGCCGACGTACT"
+
+The Python functions were:
+
+[In] def kmer_count(seq, k): f = {}
+    for x in range(len(seq)+1-k): kmer = seq[x:x+k]
+    f[kmer] = f.get(kmer, 0) + 1
+    return(f) 
+    kmer_count(my_seq1,3)
+    kmer_count(my_seq2,3)
+  
+The output of the second function can be seen in the image below:
+
+![](/blog/2019-12-14-computational-biology-fall-2019_files/PythonFunction.jpg)
+
 
 
